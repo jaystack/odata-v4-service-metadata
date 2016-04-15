@@ -1,7 +1,7 @@
 {
   "name": "odata-v4-service-metadata",
   "version": "0.1.0",
-  "description": "OData metadata utilities",
+  "description": "OData service metadata document",
   "main": "lib/metadata.js",
   "bugs": {
     "url": "https://github.com/jaystack/odata-v4-service-metadata/issues"
