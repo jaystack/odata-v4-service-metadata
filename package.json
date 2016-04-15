@@ -1,20 +1,22 @@
 {
-  "name": "odata-v4-metadata-xml",
+  "name": "odata-v4-service-metadata",
   "version": "0.1.0",
   "description": "OData metadata utilities",
   "main": "lib/metadata.js",
   "bugs": {
-    "url": "https://github.com/jaystack/odata-v4-metadata-xml/issues"
+    "url": "https://github.com/jaystack/odata-v4-service-metadata/issues"
   },
-  "homepage": "https://github.com/jaystack/odata-v4-metadata-xml#readme",
+  "homepage": "https://github.com/jaystack/odata-v4-service-metadata#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jaystack/odata-v4-metadata-xml.git"
+    "url": "https://github.com/jaystack/odata-v4-service-metadata.git"
   },
   "keywords": [
     "OData",
     "V4",
+    "service",
     "metadata",
+    "document",
     "XML"
   ],
   "typings": "lib/metadata.d.ts",
@@ -33,7 +35,7 @@
     "typescript": "^1.8.9"
   },
   "scripts": {
-    "build": "tsc src/metadata.ts --outDir lib -d",
+    "build": "tsc",
     "pretest": "npm run build",
     "test": "mocha tests"
   }

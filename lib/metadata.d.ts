@@ -1,9 +1,12 @@
 import { Edm } from 'odata-metadata';
-export declare class Metadata {
-    static processMetadataJson(json: any): Metadata;
-    static processEdmx(edmx: Edm.Edmx): Metadata;
-    static defineEntities(entityConfig: any): Metadata;
-    private text;
+import { Request, Response, RequestHandler } from 'express';
+export declare class ServiceMetadata {
+    static processMetadataJson(json: any): ServiceMetadata;
+    static processEdmx(edmx: Edm.Edmx): ServiceMetadata;
+    static defineEntities(entityConfig: any): ServiceMetadata;
+    private xml;
     constructor(edmx: Edm.Edmx);
-    toXml(): string;
+    document(format?: string): string;
+    requestHandler(format?: string): (req: Request, res: Response, next: RequestHandler) => void;
+    toString(): string;
 }

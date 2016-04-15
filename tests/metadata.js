@@ -1,13 +1,13 @@
-var Metadata = require('../lib/metadata').Metadata
+var ServiceMetadata = require('../lib/metadata').ServiceMetadata
 
 
 var schema = require('./schema2')
 describe('metadata', () => {
     it('xml', (done) => {
-        var m = Metadata.processMetadataJson(schema)
+        var m = ServiceMetadata.processMetadataJson(schema)
 
         var fs = require('fs');
-        fs.writeFile("./metadata.xml", m.toXml(), function(err) {
+        fs.writeFile("./metadata.xml", m, function(err) {
             if (err) {
                 return console.log(err);
             }
@@ -20,7 +20,7 @@ describe('metadata', () => {
     })
     
     it.only('defineEntities', (done) => {
-        var m = Metadata.defineEntities({
+        var m = ServiceMetadata.defineEntities({
             namespace: 'JayData.Entities',
             containerName: 'Container',
             entities: [
@@ -55,7 +55,7 @@ describe('metadata', () => {
         
         
         var fs = require('fs');
-        fs.writeFile("./metadata.xml", m.toXml(), function(err) {
+        fs.writeFile("./metadata.xml", m, function(err) {
             if (err) {
                 return console.log(err);
             }

@@ -3,7 +3,7 @@ import * as extend from 'extend'
 import { Xml } from './XmlCreator'
 
 export class XmlMetadata {
-    private metadata: Edm.Edmx
+    public metadata: Edm.Edmx
     private options: any
 
     constructor(options: any, edmx: Edm.Edmx) {

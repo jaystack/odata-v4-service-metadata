@@ -1,6 +1,6 @@
 import { Edm } from 'odata-metadata';
 export declare class XmlMetadata {
-    private metadata;
+    metadata: Edm.Edmx;
     private options;
     constructor(options: any, edmx: Edm.Edmx);
     processMetadata(): any;

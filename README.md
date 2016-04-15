@@ -1,14 +1,16 @@
-# OData v4 $metadata
+# OData V4 Service Metadata
 
-Using this module you can generate a $metadata XML response from a simple JSON format, an advanced schema JSON format or an Edmx instance created with [odata-metadata](https://github.com/jaystack/odata-metadata).
+Using this module you can generate a service metadata document response from a simple JSON format, an advanced schema JSON format or an Edmx instance created with [odata-metadata](https://github.com/jaystack/odata-metadata).
 
 ## Basic usage
 
-Use the simple JSON format and convert your metadata JSON to XML format with ```.toXml()```.
+Use the simple JSON format and convert your metadata JSON to a service metadata document.
 
 ```javascript
-var Metadata = require('odata-v4-metadata-xml').Metadata;
-var metadata = Metadata.defineEntities({
+var ServiceMetadata = require('odata-v4-service-metadata').ServiceMetadata;
+
+// $metadata express.js route
+app.get('/odata/\\$metadata', ServiceMetadata.defineEntities({
     namespace: 'Default',
     containerName: 'Container',
     entities: [
@@ -31,14 +33,7 @@ var metadata = Metadata.defineEntities({
             ]
         }
     ]
-});
-var metadataXml = metadata.toXml();
-
-// $metadata express.js route
-app.get('/odata/\\$metadata', function(req, res, next){
-	res.set('Content-Type', 'application/xml');
-    res.send(metadataXml);
-});
+}).requestHandler());
 ```
 
 ## Advanced usage
@@ -46,10 +41,10 @@ app.get('/odata/\\$metadata', function(req, res, next){
 Use a schema JSON, which is more verbose, but you can customize the metadata in a more advanced way.
 
 ```javascript
-var Metadata = require('odata-v4-metadata-xml').Metadata;
+var ServiceMetadata = require('odata-v4-service-metadata').ServiceMetadata;
 var schema = require('./schema');
-var metadata = Metadata.processMetadataJson(schema);
-var metadataXml = metadata.toXml();
+var serviceMetadata = ServiceMetadata.processMetadataJson(schema);
+var serviceMetadataDocument = serviceMetadata.document();
 ```
 
-An example schema JSON looks like [this](https://raw.githubusercontent.com/jaystack/odata-v4-metadata-xml/master/tests/schema2.json)
+An example schema JSON looks like [this](https://raw.githubusercontent.com/jaystack/odata-v4-service-metadata/master/tests/schema2.json)

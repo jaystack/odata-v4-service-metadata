@@ -10,6 +10,7 @@
         "sourceMap": true
     },
     "exclude": [
+        "lib",
         "node_modules"
     ]
 }
