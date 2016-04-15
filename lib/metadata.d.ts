@@ -1,4 +1,4 @@
-import { Edm } from 'odata-metadata';
+import { Edm } from 'odata-v4-metadata';
 import { Request, Response, RequestHandler } from 'express';
 export declare class ServiceMetadata {
     static processMetadataJson(json: any): ServiceMetadata;

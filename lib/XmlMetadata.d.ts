@@ -1,4 +1,4 @@
-import { Edm } from 'odata-metadata';
+import { Edm } from 'odata-v4-metadata';
 export declare class XmlMetadata {
     metadata: Edm.Edmx;
     private options;

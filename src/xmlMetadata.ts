@@ -1,4 +1,4 @@
-import { Edm } from 'odata-metadata'
+import { Edm } from 'odata-v4-metadata'
 import * as extend from 'extend'
 import { Xml } from './XmlCreator'
 
