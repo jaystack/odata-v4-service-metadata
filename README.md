@@ -1,4 +1,4 @@
-# OData V4 Service Metadata
+# OData V4 Service Metadata Document
 
 Using this module you can generate a service metadata document response from a simple JSON format, an advanced schema JSON format or an Edmx instance created with [odata-metadata](https://github.com/jaystack/odata-metadata).
 
