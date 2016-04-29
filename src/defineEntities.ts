@@ -53,8 +53,8 @@ export var defineEntities = (entityConfig) => {
 
     //computed
     entityConfig.entities && entityConfig.entities.map(e => {
-        if(!e.computedKey) return
-        var target = (entityConfig.namespace ? (entityConfig.namespace + '.') : '') + e.name
+        if(!e.computedKey || !e.keys || e.keys.length !== 1) return
+        var target = (entityConfig.namespace ? (entityConfig.namespace + '.') : '') + e.name + "/" + e.keys[0]
         
         if(!annotations[target])
             annotations[target] = { target: target, annotation: [] }

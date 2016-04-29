@@ -1,6 +1,6 @@
 {
   "name": "odata-v4-service-metadata",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "OData service metadata document",
   "main": "lib/metadata.js",
   "bugs": {
