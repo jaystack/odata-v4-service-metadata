@@ -36,6 +36,42 @@ export var defineEntities = (entityConfig) => {
                         })
                         return def;
                     }),
+                    action: entityConfig.actions && entityConfig.actions.map(a => {
+                        var def = {
+                            name: a.name,
+                            isBound: undefined,
+                            parameter: undefined,
+                            returnType: undefined
+                        }
+                        if ('isBound' in a) def.isBound = a.isBound
+                        if ('parameters' in a) def.parameter = a.parameters
+                        if ('returnType' in a) {
+                            if (typeof a.returnType == 'string') {
+                                def.returnType = { type: a.returnType }
+                            } else {
+                                def.returnType = a.returnType
+                            }
+                        }
+                        return def;
+                    }),
+                    function: entityConfig.functions && entityConfig.functions.map(a => {
+                        var def = {
+                            name: a.name,
+                            isBound: undefined,
+                            parameter: undefined,
+                            returnType: undefined
+                        }
+                        if ('isBound' in a) def.isBound = a.isBound
+                        if ('parameters' in a) def.parameter = a.parameters
+                        if ('returnType' in a) {
+                            if (typeof a.returnType == 'string') {
+                                def.returnType = { type: a.returnType }
+                            } else {
+                                def.returnType = a.returnType
+                            }
+                        }
+                        return def;
+                    }),
                     entityContainer: {
                         name: entityConfig.containerName,
                         entitySet: entityConfig.entities && entityConfig.entities.map(e => {
@@ -43,6 +79,26 @@ export var defineEntities = (entityConfig) => {
                                 name: e.collectionName,
                                 entityType: (entityConfig.namespace ? (entityConfig.namespace + '.') : '') + e.name
                             }
+                        }),
+                        actionImport: entityConfig.actions && entityConfig.actions.filter(a => !a.isBound).map(a => {
+                            var def = {
+                                name: a.name,
+                                action: (entityConfig.namespace ? (entityConfig.namespace + '.') : '') + a.name,
+                                entitySet: undefined
+                            }
+                            if ('entitySet' in a) def.entitySet = a.entitySet
+                            return def;
+                        }),
+                        functionImport: entityConfig.functions && entityConfig.functions.filter(a => !a.isBound).map(a => {
+                            var def = {
+                                name: a.name,
+                                function: (entityConfig.namespace ? (entityConfig.namespace + '.') : '') + a.name,
+                                includeInServiceDocument: undefined,
+                                entitySet: undefined
+                            }
+                            if ('includeInServiceDocument' in a) def.includeInServiceDocument = a.includeInServiceDocument
+                            if ('entitySet' in a) def.entitySet = a.entitySet
+                            return def;
                         })
                     }
                 }
@@ -53,12 +109,12 @@ export var defineEntities = (entityConfig) => {
 
     //computed
     entityConfig.entities && entityConfig.entities.map(e => {
-        if(!e.computedKey || !e.keys || e.keys.length !== 1) return
+        if (!e.computedKey || !e.keys || e.keys.length !== 1) return
         var target = (entityConfig.namespace ? (entityConfig.namespace + '.') : '') + e.name + "/" + e.keys[0]
-        
-        if(!annotations[target])
+
+        if (!annotations[target])
             annotations[target] = { target: target, annotation: [] }
-        
+
         annotations[target].annotation.push({
             term: 'Org.OData.Core.V1.Computed',
             bool: 'true'
@@ -68,6 +124,6 @@ export var defineEntities = (entityConfig) => {
     edmx.dataServices.schema[0].annotations = Object.keys(annotations).map(a => {
         return annotations[a]
     })
-    
+
     return edmx;
 }
