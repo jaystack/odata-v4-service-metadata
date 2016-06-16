@@ -4,23 +4,22 @@ import { defineEntities } from './defineEntities'
 import { Request, Response, RequestHandler } from 'express';
 
 export class ServiceMetadata {
-    static processMetadataJson(json) {
+    static processMetadataJson(json, options?: Object) {
         var edmx = new Edm.Edmx(json);
-        return new ServiceMetadata(edmx);
+        return new this(edmx, options);
     }
-    static processEdmx(edmx: Edm.Edmx) {
-        return new ServiceMetadata(edmx);
+    static processEdmx(edmx: Edm.Edmx, options?: Object) {
+        return new this(edmx, options);
     }
-    static defineEntities(entityConfig) {
+    static defineEntities(entityConfig: Object, options?: Object) {
         var json = defineEntities(entityConfig)
         var edmx = new Edm.Edmx(json);
-        return new ServiceMetadata(edmx);
+        return new this(edmx, options);
     }
 
-    private xml: string
-    constructor(edmx: Edm.Edmx) {
-        var xmlMetadata = new XmlMetadata({}, edmx);
-        this.xml = xmlMetadata.processMetadata();
+    protected data: any
+    constructor(edmx: Edm.Edmx, options?: Object) {
+        this.process(edmx, options)
     }
     
     document(format?: string) {
@@ -28,8 +27,13 @@ export class ServiceMetadata {
             case 'json':
             case 'application/json':
                 throw new Error('Not implemented');
-            default: return this.xml;
+            default: return this.data;
         }
+    }
+    
+    process(edmx: Edm.Edmx, options?: Object) {
+        var xmlMetadata = new XmlMetadata(options, edmx);
+        this.data = xmlMetadata.processMetadata();
     }
     
     requestHandler(format?: string) {
@@ -39,7 +43,7 @@ export class ServiceMetadata {
         };
     }
 
-    toString() {
-        return this.xml;
+    valueOf() {
+        return this.data;
     }
 }
