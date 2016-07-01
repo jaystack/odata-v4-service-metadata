@@ -3,7 +3,7 @@ var ServiceMetadata = require('../lib/metadata').ServiceMetadata
 
 var schema = require('./schema2')
 describe('metadata', () => {
-    it('xml', (done) => {
+    it.skip('xml', (done) => {
         var m = ServiceMetadata.processMetadataJson(schema)
 
         var fs = require('fs');
@@ -15,11 +15,9 @@ describe('metadata', () => {
             console.log("The file was saved!");
             done()
         });
-
-
-    })
+    });
     
-    it.only('defineEntities', (done) => {
+    it('defineEntities', (done) => {
         var m = ServiceMetadata.defineEntities({
             namespace: 'JayData.Entities',
             containerName: 'Container',

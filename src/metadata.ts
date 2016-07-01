@@ -17,9 +17,11 @@ export class ServiceMetadata {
         return new this(edmx, options);
     }
 
+    edmx: Edm.Edmx
     protected data: any
     constructor(edmx: Edm.Edmx, options?: Object) {
-        this.process(edmx, options)
+        this.edmx = edmx;
+        this.process(edmx, options);
     }
     
     document(format?: string) {
