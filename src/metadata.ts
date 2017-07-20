@@ -39,7 +39,7 @@ export class ServiceMetadata {
     }
     
     requestHandler(format?: string) {
-        return (req:Request, res:Response, next:RequestHandler) => {
+        return (_:Request, res:Response, __:RequestHandler) => {
             res.set('Content-Type', 'application/xml');
             res.send(this.document(format));
         };

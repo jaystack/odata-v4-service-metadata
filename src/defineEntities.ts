@@ -105,7 +105,6 @@ export var defineEntities = (entityConfig) => {
             ]
         }
     }
-    var entityNames = Object.keys(entityConfig.entities)
 
     //computed
     entityConfig.entities && entityConfig.entities.map(e => {

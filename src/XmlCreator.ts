@@ -52,7 +52,7 @@ export namespace Xml {
 
             return this;
         }
-        endElement (isInline) {
+        endElement (isInline = false) {
             this.persistNode(this.currentElement, isInline);
             this.currentElement = this.elements.pop();
             return this;
@@ -92,14 +92,14 @@ export namespace Xml {
         declareNamespace (schema, schemaName) {
             return new XmlNamespace(schema, schemaName);
         }
-        declareElement (namespaceOrName, name) {
+        declareElement (namespaceOrName, name?) {
             if (typeof namespaceOrName === 'string') {
                 return new XmlElement(namespaceOrName);
             } else {
                 return new XmlElement(name, namespaceOrName);
             }
         }
-        declareAttribute (namespaceOrName, name) {
+        declareAttribute (namespaceOrName, name?) {
             if (typeof namespaceOrName === 'string') {
                 return new XmlAttribute(namespaceOrName);
             } else {

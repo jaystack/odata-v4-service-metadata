@@ -1,6 +1,6 @@
 {
   "name": "odata-v4-service-metadata",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "OData service metadata document",
   "main": "lib/metadata.js",
   "bugs": {
@@ -30,13 +30,17 @@
     "odata-v4-metadata": "^0.1.2"
   },
   "devDependencies": {
+    "@types/express": "^4.0.36",
     "chai": "^3.4.1",
     "mocha": "^2.4.5",
-    "typescript": "^1.8.9"
+    "rimraf": "^2.6.1",
+    "typescript": "^2.4.0"
   },
   "scripts": {
+    "prebuild": "rimraf lib",
     "build": "tsc",
     "pretest": "npm run build",
-    "test": "mocha tests"
+    "test": "mocha tests",
+    "prepublish": "npm run build"
   }
 }

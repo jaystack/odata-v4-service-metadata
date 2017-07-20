@@ -34,7 +34,7 @@ export class XmlMetadata {
         return xmlResult
     }
 
-    buildEdmx(xml, edmx) {
+    buildEdmx(xml: Xml.XmlCreator, edmx: Edm.Edmx) {
         var ns = xml.declareNamespace(this.options.edmx, 'edmx');
         var edmxElement = xml.declareElement(ns, 'Edmx');
         var version = xml.declareAttribute('Version');
@@ -46,7 +46,7 @@ export class XmlMetadata {
         xml.endElement();
     }
 
-    buildDataServices(xml, dataservices) {
+    buildDataServices(xml: Xml.XmlCreator, dataservices: Edm.DataServices) {
         var ns = xml.declareNamespace(this.options.edmx, 'edmx');
         var dataservicesElement = xml.declareElement(ns, 'DataServices');
 
@@ -56,7 +56,7 @@ export class XmlMetadata {
         xml.endElement();
     }
 
-    buildSchema(xml, schemas) {
+    buildSchema(xml: Xml.XmlCreator, schemas: Edm.Schema[]) {
         schemas && schemas.forEach(schema => {
             var xmlns = xml.declareAttribute('xmlns');
             var schemaElement = xml.declareElement('Schema');
@@ -67,10 +67,11 @@ export class XmlMetadata {
                 .addAttribute(ns, schema.namespace || this.options.contextNamespace);
 
             if (schema.alias)
-                xml.addAttribute(xml.declareAttribute('Alias'), schema.alias)
+                xml.addAttribute(xml.declareAttribute('Alias'), schema.alias);
 
             this.buildEntityTypes(xml, schema.entityTypes)
             this.buildComplexTypes(xml, schema.complexTypes)
+            this.buildTypeDefinitions(xml, schema.typeDefinitions)
             this.buildEnumTypes(xml, schema.enumTypes)
             this.buildActions(xml, schema.actions)
             this.buildFunctions(xml, schema.functions)
@@ -81,8 +82,25 @@ export class XmlMetadata {
         })
     }
 
-    buildEnumTypes(xml, enumTypes) {
-        enumTypes && enumTypes.forEach(enumType => {
+    buildTypeDefinitions(xml: Xml.XmlCreator, typeDefinitions: Edm.TypeDefinition[]) {
+        typeDefinitions && typeDefinitions.forEach(typeDefinition => {
+            var rootElement = xml.declareElement('TypeDefinition')
+            var name = xml.declareAttribute('Name')
+
+            xml.startElement(rootElement)
+                .addAttribute(name, typeDefinition.name)
+
+            if (typeDefinition.underlyingType)
+                xml.addAttribute(xml.declareAttribute('UnderlyingType'), typeDefinition.underlyingType)
+
+            this.buildAnnotations(xml, typeDefinition.annotations)
+
+            xml.endElement()
+        })
+    }
+
+    buildEnumTypes(xml: Xml.XmlCreator, enumTypes: Edm.EnumType[]) {
+        enumTypes && enumTypes.forEach((enumType: Edm.EnumType) => {
             var rootElement = xml.declareElement('EnumType')
             var name = xml.declareAttribute('Name')
 
@@ -105,19 +123,19 @@ export class XmlMetadata {
         })
     }
 
-    buildEntityTypes(xml, entityTypes) {
+    buildEntityTypes(xml: Xml.XmlCreator, entityTypes: Edm.EntityType[]) {
         entityTypes && entityTypes.forEach(entityType => {
             this.buildType(xml, entityType, 'EntityType')
         })
     }
 
-    buildComplexTypes(xml, complexTypes) {
+    buildComplexTypes(xml: Xml.XmlCreator, complexTypes: Edm.ComplexType[]) {
         complexTypes && complexTypes.forEach(complexType => {
             this.buildType(xml, complexType, 'ComplexType')
         })
     }
 
-    buildType(xml, type, xmlElementName) {
+    buildType(xml: Xml.XmlCreator, type: Edm.EntityType | Edm.ComplexType, xmlElementName: string) {
         var rootElement = xml.declareElement(xmlElementName)
         var name = xml.declareAttribute('Name')
 
@@ -136,7 +154,9 @@ export class XmlMetadata {
         if (type.hasStream)
             xml.addAttribute(xml.declareAttribute('HasStream'), type.hasStream)
 
-        this.buildTypeKeys(xml, type.key)
+        if (type instanceof Edm.EntityType){
+            this.buildTypeKeys(xml, (<Edm.EntityType>type).key)
+        }
         this.buildTypeProperties(xml, type.properties)
         this.buildTypeNavigationProperties(xml, type.navigationProperties)
         this.buildAnnotations(xml, type.annotations)
@@ -144,7 +164,7 @@ export class XmlMetadata {
         xml.endElement()
     }
 
-    buildTypeKeys(xml, key) {
+    buildTypeKeys(xml: Xml.XmlCreator, key: Edm.Key) {
         if (!key) return;
 
         var keyElement = xml.declareElement('Key')
@@ -168,7 +188,7 @@ export class XmlMetadata {
         }
     }
 
-    buildTypeProperties(xml, properties) {
+    buildTypeProperties(xml: Xml.XmlCreator, properties: Edm.Property[]) {
         properties && properties.forEach(property => {
             var propertyElement = xml.declareElement('Property');
 
@@ -193,7 +213,7 @@ export class XmlMetadata {
         defaultValue: { name: 'DefaultValue' }
     }
 
-    buildTypeNavigationProperties(xml, navigationProperties) {
+    buildTypeNavigationProperties(xml: Xml.XmlCreator, navigationProperties: Edm.NavigationProperty[]) {
         navigationProperties && navigationProperties.forEach(navigationProperty => {
             var navigationPropertyElement = xml.declareElement('NavigationProperty');
 
@@ -207,7 +227,7 @@ export class XmlMetadata {
         })
     }
 
-    buildNavPropertyReferentialConstraints(xml, referentialConstraints) {
+    buildNavPropertyReferentialConstraints(xml: Xml.XmlCreator, referentialConstraints: Edm.ReferentialConstraint[]) {
         referentialConstraints && referentialConstraints.forEach(referentialConstraint => {
             var referentialConstraintElement = xml.declareElement('ReferentialConstraint');
             xml.startElement(referentialConstraintElement);
@@ -230,7 +250,7 @@ export class XmlMetadata {
         partner: { name: 'Partner' }
     }
 
-    buildEnumMembers(xml, members) {
+    buildEnumMembers(xml: Xml.XmlCreator, members: Edm.Member[]) {
         members && members.forEach(member => {
             var memberElement = xml.declareElement('Member');
 
@@ -248,7 +268,7 @@ export class XmlMetadata {
         value: { name: 'Value' }
     }
 
-    buildAttributes(xml, object, mappings) {
+    buildAttributes(xml: Xml.XmlCreator, object: any, mappings: any) {
         var attributes = mappings && Object.keys(mappings);
         object && attributes && attributes.forEach(prop => {
             if (typeof object[prop] !== 'undefined' && object[prop] !== null) {
@@ -257,9 +277,8 @@ export class XmlMetadata {
             }
         });
     }
-    
-    
-    buildActions(xml, actions){
+
+    buildActions(xml: Xml.XmlCreator, actions: Edm.Action[]){
         actions && actions.forEach(action => {
             var actionElement = xml.declareElement('Action');
             var name = xml.declareAttribute('Name')
@@ -281,7 +300,7 @@ export class XmlMetadata {
         })
     }
     
-    buildFunctions(xml, functions){
+    buildFunctions(xml: Xml.XmlCreator, functions: Edm.Function[]){
         functions && functions.forEach(func => {
             var funcElement = xml.declareElement('Function');
             var name = xml.declareAttribute('Name')
@@ -306,7 +325,7 @@ export class XmlMetadata {
         })
     }
     
-    buildParameters(xml, parameters){
+    buildParameters(xml: Xml.XmlCreator, parameters: Edm.Parameter[]){
         parameters && parameters.forEach(parameter => {
             var parameterElement = xml.declareElement('Parameter');
             
@@ -330,7 +349,7 @@ export class XmlMetadata {
         SRID: { name: 'SRID' }
     }
     
-    buildReturnType(xml, returnType){
+    buildReturnType(xml: Xml.XmlCreator, returnType: Edm.ReturnType){
         if( !returnType || 
             typeof returnType.type === 'undefined') 
             return
@@ -351,7 +370,7 @@ export class XmlMetadata {
     }
     
 
-    buildEntityContainer(xml, entityContainers) {
+    buildEntityContainer(xml: Xml.XmlCreator, entityContainers: Edm.EntityContainer[]) {
         entityContainers && entityContainers.forEach(entityContainer => {
             var entityContainerElement = xml.declareElement('EntityContainer');
             var name = xml.declareAttribute('Name');
@@ -367,7 +386,7 @@ export class XmlMetadata {
         })
     }
 
-    buildEntitySets(xml, entitySets) {
+    buildEntitySets(xml: Xml.XmlCreator, entitySets: Edm.EntitySet[]) {
         entitySets && entitySets.forEach(entitySet => {
             var entitySetElement = xml.declareElement('EntitySet');
             var name = xml.declareAttribute('Name');
@@ -383,7 +402,7 @@ export class XmlMetadata {
         })
     }
     
-    buildActionImports(xml, actionImports){
+    buildActionImports(xml: Xml.XmlCreator, actionImports: Edm.ActionImport[]){
         actionImports && actionImports.forEach(actionImport => {
             var actionImportElement = xml.declareElement('ActionImport');
             var name = xml.declareAttribute('Name')
@@ -399,7 +418,7 @@ export class XmlMetadata {
         })
     }
     
-    buildFunctionImports(xml, functionImports){
+    buildFunctionImports(xml: Xml.XmlCreator, functionImports: Edm.FunctionImport[]){
         functionImports && functionImports.forEach(functionImport => {
             var FunctionImportElement = xml.declareElement('FunctionImport');
             var name = xml.declareAttribute('Name')
@@ -420,7 +439,7 @@ export class XmlMetadata {
     
 
 
-    buildSchemaAnnotations(xml, schemaAnnotations) {
+    buildSchemaAnnotations(xml: Xml.XmlCreator, schemaAnnotations: Edm.Annotations[]) {
         schemaAnnotations && schemaAnnotations.forEach(schemaAnnotation => {
             var target = xml.declareAttribute('Target');
             var AnnotationsElement = xml.declareElement('Annotations');
@@ -436,7 +455,7 @@ export class XmlMetadata {
         })
     }
 
-    buildAnnotations(xml, annotations) {
+    buildAnnotations(xml: Xml.XmlCreator, annotations: Edm.Annotation[]) {
         annotations && annotations.forEach(annotation => {
             var AnnotationElement = xml.declareElement('Annotation');
 
@@ -470,7 +489,7 @@ export class XmlMetadata {
         })
     }
 
-    buildCollectionAnnotation(xml, value, annotConfig, annotation) {
+    buildCollectionAnnotation(xml: Xml.XmlCreator, value: any[], annotConfig: any, _: Edm.Annotation) {
         var collectionElement = xml.declareElement('Collection');
         xml.startElement(collectionElement)
 
