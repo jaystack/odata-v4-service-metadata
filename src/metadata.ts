@@ -1,5 +1,5 @@
 import { Edm } from 'odata-v4-metadata'
-import { XmlMetadata } from './XmlMetadata'
+import { XmlMetadata } from './xmlMetadata'
 import { defineEntities } from './defineEntities'
 import { Request, Response, RequestHandler } from 'express';
 
